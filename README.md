@@ -1,70 +1,82 @@
-# 🎬 D-ID AI Avatar Video Generator
+# 🎬 D-ID AI Avatar Studio Pro
 
-A Streamlit web app that uses the **D-ID API** to create realistic AI talking-avatar videos in five guided steps — matching the assignment requirements exactly.
+An advanced, production-ready Streamlit application that integrates with the **D-ID API** to generate photorealistic AI talking avatar videos from any portrait photo using either neural text-to-speech (TTS) or custom voice recordings.
+
+---
+
+## ✨ Features & Capabilities
+
+- **📸 Custom Avatar Upload**: Drag & drop any face photo (JPG/PNG). Automatically uploads to D-ID via `POST /images`.
+- **📝 Script-to-Speech (TTS)**:
+  - ⚡ **One-Click Script Templates**: Product Pitch, Course Explainer, Welcome Greeting, Motivational Quote.
+  - 📊 **Real-time Script Analytics**: Character count, word count, and estimated speech duration.
+  - 🌐 **Global Neural Voices**: Curated Azure Neural Voices across 14 languages & accents (US, UK, Australia, India, Spain, Mexico, France, Germany, Italy, Brazil, Japan, China, etc.).
+  - 🎭 **Emotional Speaking Styles**: Cheerful, empathetic, excited, friendly, hopeful, whispering, and more.
+- **🎙️ Custom Audio & Voiceover Upload**:
+  - Upload pre-recorded audio files (`.mp3`, `.wav`, `.m4a`, `.ogg`) or record directly through your microphone using Streamlit's `st.audio_input`.
+  - Automatically sends audio to D-ID via `POST /audios` and animates lip-sync matching the custom audio track.
+- **💳 Live Account & Credit Checker**: Check your real-time D-ID credit balance, plan tier, and remaining units from the sidebar (`GET /credits`).
+- **⚙️ Advanced Animation Controls**: Toggle full-image seamless face stitching (`stitch`) versus close-up face crop.
+- **🎞️ Session History & Video Gallery**: Automatically tracks all generated videos in your session so you can review, compare, re-download, or copy links anytime.
+- **🔗 Share & Export Suite**: Copy public shareable URLs, direct download MP4s, or copy HTML embed codes.
+- **🔒 Seamless Secret Management**: Supports `.env` files locally and `st.secrets` on Streamlit Community Cloud.
+
+---
 
 ## 📋 Assignment Steps Covered
 
-| Step | What the app does |
-|------|-------------------|
-| 1 | Select or create a suitable avatar (presets or custom URL) |
-| 2 | Add a short script or suitable spoken content |
-| 3 | Configure voice and language settings (14 voices, 11 styles) |
-| 4 | Generate the AI avatar video via the D-ID API |
-| 5 | Review the output and copy the shareable video URL |
+| Step | Implementation |
+|---|---|
+| **Step 1: Select or create a suitable avatar** | Upload any portrait photo with real-time size & preview validation. |
+| **Step 2: Add a short script or spoken content** | Custom script editor with built-in templates, duration estimation, or custom audio upload. |
+| **Step 3: Configure voice and language** | Multilingual neural voices, dialect selection, and emotional tone control. |
+| **Step 4: Generate the AI avatar video** | Submits job to `POST /talks`, real-time status tracker, and progress animation. |
+| **Step 5: Review output & copy public link** | Video player, verified public URL code box, download button, and HTML embed snippet. |
 
 ---
 
-## 🚀 Quick Start (Local)
+## 🚀 Quick Start (Local Setup)
 
-### 1. Clone the repo
+### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/d-id-avatar-generator.git
-cd d-id-avatar-generator
+git clone https://github.com/<your-username>/d-id-avatar-studio.git
+cd d-id-avatar-studio
 ```
 
-### 2. Create a virtual environment and install dependencies
+### 2. Install dependencies
 ```bash
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
-
 pip install -r requirements.txt
 ```
 
-### 3. Set your D-ID API key
-Copy the example env file and add your key:
+### 3. Configure your D-ID API Key
+Create a `.env` file from `.env.example`:
 ```bash
 cp .env.example .env
 ```
-Then open `.env` and replace `your_d_id_api_key_here` with your actual key.
-
-> **Where to get the key:** Log in to [D-ID Studio](https://studio.d-id.com/) → click your profile picture → **API**.
-
-### 4. Run the app
-```bash
-streamlit run app.py
+Add your key inside `.env`:
+```ini
+DID_API_KEY=your_d_id_api_key_here
 ```
+> **Where to get your key**: Log in at [studio.d-id.com](https://studio.d-id.com/) → Click your profile icon → Select **API**.
 
-The app will open at **http://localhost:8501**.
+### 4. Run the Streamlit App
+```bash
+python -m streamlit run app.py
+```
+Open **http://localhost:8501** in your browser.
 
 ---
 
-## ☁️ Deploy on Streamlit Community Cloud (free)
+## ☁️ Deploy to Streamlit Community Cloud (Free)
 
-1. Push this repo to GitHub (make sure `.env` is in `.gitignore` — it already is).
-2. Go to [share.streamlit.io](https://share.streamlit.io) and click **New app**.
-3. Select your repo and set the **Main file path** to `app.py`.
-4. Open **Advanced settings → Secrets** and add:
+1. Push your repository to GitHub (ensure `.env` is ignored by `.gitignore`).
+2. Go to [share.streamlit.io](https://share.streamlit.io) and create a **New app**.
+3. Select your repository, branch, and set main file to `app.py`.
+4. In **Advanced Settings → Secrets**, paste:
    ```toml
    DID_API_KEY = "your_d_id_api_key_here"
    ```
-5. Click **Deploy**. Done!
-
-> **Note:** Streamlit Cloud reads `st.secrets` automatically from the Secrets panel, but `python-dotenv` also works locally via the `.env` file.
+5. Click **Deploy**. The app will automatically read the secret!
 
 ---
 
@@ -72,35 +84,14 @@ The app will open at **http://localhost:8501**.
 
 ```
 d-id/
-├── app.py            # Main Streamlit application
-├── requirements.txt  # Python dependencies
-├── .env.example      # Template — copy to .env and fill in your key
-├── .gitignore        # Keeps secrets and cache out of git
-└── README.md         # This file
+├── app.py            # Streamlit application with full feature set
+├── requirements.txt  # Dependencies (streamlit, requests, python-dotenv)
+├── .env.example      # Template for environment variables
+├── .gitignore        # Prevents secrets & cache from entering git
+└── README.md         # Documentation & guide
 ```
 
 ---
 
-## 🔑 D-ID API Details
-
-| Item | Value |
-|------|-------|
-| Base URL | `https://api.d-id.com` |
-| Auth | HTTP Basic — API key Base64-encoded |
-| Create video | `POST /talks` |
-| Poll status | `GET /talks/{id}` |
-| TTS provider | Microsoft Azure Neural Voices |
-
----
-
-## ⚠️ Important Notes
-
-- Keep your `.env` file **secret** — never push it to GitHub.
-- D-ID free accounts have a limited credit balance. Each video costs a few credits.
-- Generation typically takes **15–60 seconds** depending on script length.
-
----
-
 ## 📄 License
-
 MIT
