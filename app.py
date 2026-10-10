@@ -18,6 +18,7 @@ st.set_page_config(
 
 # ── Custom CSS for Premium UI ───────────────────────────────────────────────────
 # ── Custom CSS for Premium UI ───────────────────────────────────────────────────
+# ── Custom CSS for Premium UI ───────────────────────────────────────────────────
 st.markdown("""
 <style>
     /* Hide Streamlit branding */
@@ -25,68 +26,70 @@ st.markdown("""
     header {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* Header styling */
+    /* Beautiful gradient text for the main title */
     .main-title {
-        font-size: 3rem;
+        font-size: 3.5rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #8A2BE2 0%, #4169E1 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.5rem;
         text-align: center;
-        letter-spacing: -1px;
+        letter-spacing: -1.5px;
     }
     .sub-title {
         font-size: 1.2rem;
+        opacity: 0.7;
         text-align: center;
         margin-bottom: 3rem;
-        font-weight: 400;
+        font-weight: 300;
     }
 
-    /* Avatar preview image */
+    /* Style the avatar preview image */
     .avatar-preview {
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        border: 2px solid #555;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        border: 1px solid rgba(128,128,128,0.2);
         transition: transform 0.3s ease;
     }
     .avatar-preview:hover {
         transform: scale(1.02);
     }
 
-    /* The 'Generate' button */
+    /* Make the primary Generate button pop */
     [data-testid="baseButton-primary"] {
-        background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%) !important;
+        background: linear-gradient(135deg, #8A2BE2 0%, #4169E1 100%) !important;
         border: none !important;
         color: white !important;
-        border-radius: 50px !important;
-        font-weight: 700 !important;
-        font-size: 1.2rem !important;
-        padding: 0.75rem 2rem !important;
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4) !important;
+        border-radius: 30px !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        padding: 0.6rem 2rem !important;
         transition: all 0.3s ease !important;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(65, 105, 225, 0.4) !important;
     }
     [data-testid="baseButton-primary"]:hover {
         transform: translateY(-2px) scale(1.02) !important;
-        box-shadow: 0 8px 20px rgba(255, 107, 107, 0.5) !important;
+        box-shadow: 0 6px 20px rgba(65, 105, 225, 0.6) !important;
+    }
+
+    /* Soften the borders of standard containers to look like glass/cards */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border-radius: 16px !important;
+        border: 1px solid rgba(128, 128, 128, 0.15) !important;
+        padding: 1.5rem !important;
+        background: rgba(128, 128, 128, 0.02) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 DID_API_URL = "https://api.d-id.com"
-
-# ── Preset avatars ────────────────────────────────────────────────────────────
-AVATAR_OPTIONS = {
-    "Amy (Professional)": "https://create-images-results.d-id.com/DefaultPresenters/Amy_f/image.jpeg",
-    "Aria (Business)":    "https://create-images-results.d-id.com/DefaultPresenters/Aria_f/image.jpeg",
-    "Wade (Casual)":      "https://create-images-results.d-id.com/DefaultPresenters/Wade_m/image.jpeg",
-    "Matias (Formal)":    "https://create-images-results.d-id.com/DefaultPresenters/Matias_m/image.jpeg",
-    "Upload Image...":    "__upload__",
-    "Custom URL...":      "__custom__",
-}
 
 # ── Voice options ─────────────────────────────────────────────────────────────
 VOICE_OPTIONS = {
@@ -243,24 +246,13 @@ col_left, col_right = st.columns([1, 1.2], gap="large")
 
 with col_left:
     with st.container(border=True):
-        st.subheader("1️⃣ Select Presenter")
-        avatar_choice = st.selectbox("Choose a face", list(AVATAR_OPTIONS.keys()), label_visibility="collapsed")
+        st.subheader("1️⃣ Upload Presenter")
+        uploaded_file = st.file_uploader("Upload a face image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
         
-        source_url = None
-        uploaded_file = None
-        
-        if AVATAR_OPTIONS[avatar_choice] == "__custom__":
-            source_url = st.text_input("🔗 Custom Image URL", placeholder="https://example.com/face.jpg", help="Must be publicly accessible (e.g. Imgur, AWS S3). Wikipedia links block automated bots.")
-            if source_url:
-                st.image(source_url, use_container_width=True)
-        elif AVATAR_OPTIONS[avatar_choice] == "__upload__":
-            uploaded_file = st.file_uploader("Upload a face image", type=["jpg", "jpeg", "png"])
-            if uploaded_file:
-                st.image(uploaded_file, use_container_width=True)
+        if uploaded_file:
+            st.image(uploaded_file, use_container_width=True)
         else:
-            source_url = AVATAR_OPTIONS[avatar_choice]
-            # Nice display for the preset avatar
-            st.markdown(f'<img src="{source_url}" class="avatar-preview" style="width:100%; object-fit:cover; max-height: 350px;">', unsafe_allow_html=True)
+            st.info("👆 Upload a portrait photo to begin. High-quality, front-facing photos work best.")
 
 with col_right:
     with st.container(border=True):
@@ -295,12 +287,8 @@ if generate_btn:
         st.error("⚠️ Please provide your D-ID API Key in the sidebar.")
         st.stop()
         
-    if AVATAR_OPTIONS[avatar_choice] == "__upload__":
-        if not uploaded_file:
-            st.error("⚠️ Please upload an image file.")
-            st.stop()
-    elif not source_url:
-        st.error("⚠️ Please select an avatar or provide a custom URL.")
+    if not uploaded_file:
+        st.error("⚠️ Please upload an image file first.")
         st.stop()
         
     if not script_text.strip():
@@ -311,11 +299,10 @@ if generate_btn:
     st.subheader("🎬 Your Video")
     
     with st.spinner("🚀 Submitting request to D-ID API..."):
-        # Handle file upload first if needed
-        if AVATAR_OPTIONS[avatar_choice] == "__upload__":
-            source_url = upload_image(api_key, uploaded_file.getvalue(), uploaded_file.name)
-            if not source_url:
-                st.stop()
+        # Upload the local file to D-ID to get a temporary source_url
+        source_url = upload_image(api_key, uploaded_file.getvalue(), uploaded_file.name)
+        if not source_url:
+            st.stop()
                 
         job = create_talk(api_key, source_url, script_text, voice_id, voice_style)
 
